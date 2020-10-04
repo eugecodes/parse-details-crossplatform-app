@@ -1,0 +1,45 @@
+.form-content{
+	margin-left:35px;
+	width: calc(100% - 90px);
+}
+.form-content .label{
+text-transform:none;
+padding-top:20px;
+font-size:12px;
+color:#000;
+font-style:italic;
+text-align:center;
+font-weight:normal;
+display:block;
+}
+input.holo[type='text'] {
+	/* You can set width to whatever you like */
+    width: 100%;
+	font-family: "Roboto", "Droid Sans", sans-serif;
+	font-size: 16px;
+	margin: 0;
+	padding: 8px 8px 6px 8px;
+	position: relative;
+	display: block;
+	outline: none;
+	border: none;
+	background: bottom left linear-gradient(#a9a9a9, #a9a9a9) no-repeat, bottom center linear-gradient(#a9a9a9, #a9a9a9) repeat-x, bottom right linear-gradient(#a9a9a9, #a9a9a9) no-repeat;
+	background-size: 1px 6px, 1px 1px, 1px 6px;
+	margin-top: -20px;
+}
+input.holo[type='text']:hover, input.holo[type='text']:focus {
+	background: bottom left linear-gradient(#0099cc, #0099cc) no-repeat, bottom center linear-gradient(#0099cc, #0099cc) repeat-x, bottom right linear-gradient(#0099cc, #0099cc) no-repeat;
+	background-size: 1px 6px, 1px 1px, 1px 6px;	
+} 
+.push_button4{ 
+	width:calc(25% - 3px);
+	}
+.push_buttonbig{
+	width:100% !important;
+	}
+@media screen and (max-width:500px) {
+	.form-content{
+	margin-left:0px;
+	width: 100%;
+}
+	}

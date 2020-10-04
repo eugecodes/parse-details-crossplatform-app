@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<!--
+    Copyright (c) 2012-2014 Adobe Systems Incorporated. All rights reserved.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="msapplication-tap-highlight" content="no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css" />
+        <link rel="stylesheet" href="css/jquery.mobile.flatui.css" />
+      	<script src="js/jquery-1.10.2.js"></script>
+        <script src="js/jquery.ui.touch-punch.js"></script>
+        <script src="js/jquery-ui.js"></script>
+		<script src="js/data.js"></script>
+        <script src="js/jquery.mobile-1.4.5.min.js"></script>
+        <script>
+			var objeto = '';
+			var ob = '';
+			var cant = 0;
+			var user='';
+			var detalle = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.';
+$(document).ready(function() {
+  $( init );
+ function init() {
+	document.getElementById('contentlist').addEventListener("touchstart", touchHandler, true);
+	document.getElementById('contentlist').addEventListener("touchmove", touchHandler, true);
+	document.getElementById('contentlist').addEventListener("touchend", touchHandler, true);
+	document.getElementById('contentlist').addEventListener("touchcancel", touchHandler, true);   
+  /**/}
+  $(function(){
+  //LOAD CONTENT LIST
+  //$('.content-list')
+  user=database['user'];
+  var icount=0;
+  var icountrow=1;
+  $('.content-list').html('');
+ var datahtml='';
+  $.each( database['objetos'], function( key, value ) {
+  if(icount==0){
+  datahtml+='<!-- row'+icountrow+'--><div class="row-box" id="row'+icountrow+'">';
+  datahtml+='<div class="box">';
+            datahtml+='<a href="#searchlist">';
+            datahtml+='<img width="60px" id-json="'+key+'" src="'+value['img']+'" draggable="true" class="draggable hvr-grow" /></a>';
+            datahtml+='<div class="price"><div>'+value['precio']+'</div></div>';
+            datahtml+='</div>';  
+  icount++;
+  }else if(icount<4){
+  datahtml+='<div class="box">';
+            datahtml+='<a href="#searchlist">';
+            datahtml+='<img id="id'+key+'" width="60px" id-json="'+key+'" src="'+value['img']+'" draggable="true" class="draggable hvr-grow" /></a>';
+            datahtml+='<div class="price"><div>'+value['precio']+'</div></div>';
+            datahtml+='</div>';
+  //$('.content-list').append(datahtml); 
+  icount++;
+  }else if(icount==4){
+  datahtml+='</div><!-- row'+icountrow+' END -->';
+  icount=0;
+  icountrow++;
+  }
+   
+	});
+	$('.content-list').append(datahtml);
+	$('.content-list .draggable').click(function(){
+	var idjson= $(this).attr('id-json');
+				/*$('#d').html('draggable');
+				var imgSrc = $(this).attr("src");*/
+				$('.wow').attr("src",database['objetos'][idjson]['img']);
+				$("#desc_ver_detalle2").val(database['objetos'][idjson]['descripcion']);
+				$('.clickagregar').attr('id-json',idjson);
+				$('#precio-tab').html('$'+database['objetos'][idjson]['precio']);
+			});
+  //LOAD CONTENT LIST
+  
+  $(".content-list .draggable").bind( "dragstart", function( event ){
+  }).bind( "drag", function( event ){
+	  $( event.dragProxy ).css({
+	  left: event.offsetX, 
+	  top: event.offsetY
+	  }); 
+  }).bind( "dragend", function( event ){
+	$( event.dragProxy ).fadeOut( "normal", function(){
+	$( this ).remove();
+	});
+	if ( !event.dropTarget && $(this).parent().is("#droppable") ){}
+    $( this ).removeClass("outline");   
+    });
+	
+    $('#droppable').bind( "dropstart", function( event ){
+	if ( this == event.dragTarget.parentNode ) return false;
+	$( this ).addClass("active");
+	}).bind( "drop", function( event ){
+	$( this ).append( event.dragTarget );
+	}).bind( "dropend", function( event ){
+	$( this ).removeClass("active");
+	});
+	$( ".content-list .draggable" ).draggable({
+				drag: function (event, ui) {
+					objeto = '.content-list .draggable';
+					ob = 'draggable';
+					console.log(ob);
+					
+				}
+				});
+});
+   
+   function touchHandler(event)
+    {
+    var touches = event.changedTouches,
+    first = touches[0],
+    type = "";
+    switch(event.type)
+    {
+    case "touchstart": type = "mousedown"; break;
+    case "touchmove":  type="mousemove"; break;        
+    case "touchend":   type="mouseup"; break;
+    default: return;
+    }
+    var simulatedEvent = document.createEvent("MouseEvent");
+    simulatedEvent.initMouseEvent(type, true, true, window, 1,
+        first.screenX, first.screenY,
+           first.clientX, first.clientY, false,
+                 false, false, false, 0, null);
+    first.target.dispatchEvent(simulatedEvent);
+     event.preventDefault();
+     return;
+	 
+    }
+	
+	$('.clickagregar').click(function(){
+
+var agregarcarrito = $(this).attr('id-json');
+					  var arrayagre={};
+					 arrayagre['elemento']=$(this).attr('id-json');
+					 arrayagre['name']=database['objetos'][agregarcarrito]['name'];
+					 arrayagre['descripcion']=database['objetos'][agregarcarrito]['descripcion'];
+					 arrayagre['img']=database['objetos'][agregarcarrito]['img'];
+					 arrayagre['comentario']="";
+					 arrayagre['precio']=database['objetos'][agregarcarrito]['precio'];
+					 arrayagre['cantidad']=1;
+					 shoplist['objetoscomprados'].push(arrayagre);
+					 $('a[href="#ver_carrito"]').click();
+});
+$('#save_list').click(function(){
+var number=$('input[type="number"]').val();
+var number2=$('input[type="range"]').val();
+var definitivo=0;
+/*if (typeof number != 'undefined') {
+definitivo= $('input[type="number"]').val();
+}
+if (typeof number2 != 'undefined') {
+definitivo=$('input[type="range"]').val();
+}*/
+$.each(shoplist['objetoscomprados'],function(ind,val){
+if(typeof $('#'+ind+'a').val() != 'undefined'){
+shoplist['objetoscomprados'][ind]['cantidad']=$('#'+ind+'a').val();
+//alert(shoplist['objetoscomprados'][ind]['cantidad']);
+$('#'+ind+'a').val(shoplist['objetoscomprados'][ind]['cantidad']);
+}
+});
+ver_carrito_update();
+
+});
+
+
+$('#search-text-link').click(function(){
+var searchtext='';
+var searchhtml='';
+if($('#search-text').val()){
+
+searchtext=$('#search-text').val();
+$.each(database['objetos'],function(indx,va){
+if(va['descripcion'].indexOf(searchtext) > -1||va['name'].indexOf(searchtext) > -1){
+searchhtml+='<hr/><img id="ok2" src="img/ok.png" width="100%" height="auto" style="position:absolute;top:20%; left:0;z-index:1000; display:none;" class="grow">';
+searchhtml+='<div align="center" ><img width="150px" height="auto" src="'+va['img']+'" /></div>';
+searchhtml+='<div style="width:100%;padding-top:20px;">';
+searchhtml+='<div style="display:inline-block; width:45%; font-weight:bold; color:#F90;" align="left">Descripción:'+va['descripcion']+'</div>';
+searchhtml+='<div style="display:inline-block; width:45%;" align="right">$'+va['precio']+'</div>';
+searchhtml+='</div>';
+searchhtml+='<textarea id="desc_ver_detalle" cols="" rows="" style="height:100px;"></textarea>';
+searchhtml+='<input name="agregar" class="clickagregarsearch" id-json="'+indx+'" type="button" value="Agregar al carrito">';
+searchhtml+='<hr/>';
+
+}
+});
+}
+$('#contain_busq').html(searchhtml);
+$('.clickagregarsearch').click(function(){
+var agregarcarrito = $(this).attr('id-json');
+					  var arrayagre={};
+					 arrayagre['elemento']=$(this).attr('id-json');
+					 arrayagre['name']=database['objetos'][agregarcarrito]['name'];
+					 arrayagre['descripcion']=database['objetos'][agregarcarrito]['descripcion'];
+					 arrayagre['img']=database['objetos'][agregarcarrito]['img'];
+					 arrayagre['comentario']="";
+					 arrayagre['precio']=database['objetos'][agregarcarrito]['precio'];
+					 arrayagre['cantidad']=1;
+					 shoplist['objetoscomprados'].push(arrayagre);
+					 $('a[href="#ver_carrito"]').click();
+});
+});
+    });		
+
+		$(document).one('mobileinit', function () {
+             $.mobile.pageContainer = $('#container');
+             $.mobile.defaultPageTransition = 'slide';
+        });
+		  $(function() {
+			$('#agregar').click(function() {
+				$("#ok2").show().delay(1000).fadeOut();	
+			});
+
+			
+			
+			    $( "#droppable" ).droppable({
+				  drop: function( event, ui ) {
+					 var agregar = ui.draggable.attr('id-json');
+					  var arrayagr={};
+					 arrayagr['elemento']=ui.draggable.attr('id-json');
+					 arrayagr['name']=database['objetos'][agregar]['name'];
+					 arrayagr['descripcion']=database['objetos'][agregar]['descripcion'];
+					 arrayagr['img']=database['objetos'][agregar]['img'];
+					 arrayagr['comentario']="";
+					 arrayagr['precio']=database['objetos'][agregar]['precio'];
+					 arrayagr['cantidad']=1;
+					 shoplist['objetoscomprados'].push(arrayagr);
+					 cant++;
+					 
+					  $("#ok").show().delay(1000).fadeOut();
+					  $(objeto).delay(5000).css('left','auto');
+					  $(objeto).delay(5000).css('top','auto');
+				  }
+				});
+		  });
+function alertDismissed(){
+
+}
+function ver_carrito_update(){
+var total=0;
+//productos-list
+$('.productos-list').html('');
+ var dhtml='';
+ $.each( shoplist['objetoscomprados'], function( keyc, valuec ) {
+
+dhtml+='<hr/>';
+dhtml+='<div style="display:inline-table; width:20%;">';
+dhtml+='<a href="#searchlist"><img width="150px" height="auto" src="'+valuec['img']+'" class="hvr-grow" /></a></div>';
+dhtml+='<div style="display:inline-table; padding-left:20px;">Producto: '+valuec['name']+'</div>';
+dhtml+='<div style="display:inline-table; padding-left:40px;">Precio por Unidad: $'+valuec['precio']+'</div>';
+dhtml+='<div style="display:inline-table; padding-left:40px;">Cantidad: '+valuec['cantidad']+'</div>';
+dhtml+='';
+dhtml+='<input name="'+keyc+'a" id="'+keyc+'a" min="0" max="100" value="'+valuec['cantidad']+'" type="range" />';
+dhtml+='';
+dhtml+='<hr/>';/**/
+$('#'+keyc+'a').val(valuec['cantidad']);
+total=total + valuec['precio']*valuec['cantidad'];
+
+
+
+});
+$('#precio_total').html('$'+total);
+ $('.productos-list').append(dhtml);
+}
+
+		  function param( name ){
+			var regexS = "[\\?&]"+name+"=([^&#]*)";
+			var regex = new RegExp ( regexS );
+			var tmpURL = window.location.href;
+			var results = regex.exec( tmpURL );
+			if( results == null )
+				return "";
+			else
+				return results[1];
+		}
+		function onBackKeyDown() {
+			history.go(-1);
+			navigator.app.backHistory();
+		}
+		function vaciar_lista(){
+
+		shoplist['objetoscomprados']=[];
+		ver_carrito_update();
+		$('#loading_image').css('display','block');
+		setTimeout(function(){
+		$('#loading_image').css('display','none');
+		},2500);
+		}
+		  /*function ver_detalles(objeto, img)
+		  {
+			  window.location = '#searchlist';
+			  $('#d').html = objeto;
+		  }*/
+		 
+		</script>
+		<link rel="stylesheet" href="css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="css/index.css" />
+        <title>Instachupe</title>
+		<style>
+input[type=range] {
+  -webkit-appearance: none;
+  width: 100%;
+  margin: 5.85px 0;
+}
+input[type=range]:focus {
+  outline: none;
+}
+input[type=range]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 11.3px;
+  cursor: pointer;
+  box-shadow: 0.9px 0.9px 1.7px #002200, 0px 0px 0.9px #003c00;
+  background: #205928;
+  border-radius: 1px;
+  border: 1.1px solid #18d501;
+}
+input[type=range]::-webkit-slider-thumb {
+  box-shadow: 2.6px 2.6px 3.7px #00aa00, 0px 0px 2.6px #00c300;
+  border: 2.5px solid #83e584;
+  height: 23px;
+  width: 23px;
+  border-radius: 12px;
+  background: #439643;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -6.95px;
+}
+input[type=range]:focus::-webkit-slider-runnable-track {
+  background: #276c30;
+}
+input[type=range]::-moz-range-track {
+  width: 100%;
+  height: 11.3px;
+  cursor: pointer;
+  box-shadow: 0.9px 0.9px 1.7px #002200, 0px 0px 0.9px #003c00;
+  background: #205928;
+  border-radius: 1px;
+  border: 1.1px solid #18d501;
+}
+input[type=range]::-moz-range-thumb {
+  box-shadow: 2.6px 2.6px 3.7px #00aa00, 0px 0px 2.6px #00c300;
+  border: 2.5px solid #83e584;
+  height: 23px;
+  width: 23px;
+  border-radius: 12px;
+  background: #439643;
+  cursor: pointer;
+}
+input[type=range]::-ms-track {
+  width: 100%;
+  height: 11.3px;
+  cursor: pointer;
+  background: transparent;
+  border-color: transparent;
+  color: transparent;
+}
+input[type=range]::-ms-fill-lower {
+  background: #194620;
+  border: 1.1px solid #18d501;
+  border-radius: 2px;
+  box-shadow: 0.9px 0.9px 1.7px #002200, 0px 0px 0.9px #003c00;
+}
+input[type=range]::-ms-fill-upper {
+  background: #205928;
+  border: 1.1px solid #18d501;
+  border-radius: 2px;
+  box-shadow: 0.9px 0.9px 1.7px #002200, 0px 0px 0.9px #003c00;
+}
+input[type=range]::-ms-thumb {
+  box-shadow: 2.6px 2.6px 3.7px #00aa00, 0px 0px 2.6px #00c300;
+  border: 2.5px solid #83e584;
+  height: 23px;
+  width: 23px;
+  border-radius: 12px;
+  background: #439643;
+  cursor: pointer;
+  height: 11.3px;
+}
+input[type=range]:focus::-ms-fill-lower {
+  background: #205928;
+}
+input[type=range]:focus::-ms-fill-upper {
+  background: #276c30;
+}
+
+		</style>
+    </head>
+    <body>		
+        <div class="app">
+		<div class="container">
+        <div data-role="page" id="search" data-theme="b" style="background: #fff;">
+        	<div data-role="header" data-position="fixed" data-add-back-btn="false">
+            </div>
+        	<div data-role="content" data-theme="a">
+                
+				<div id="ok" style="text-align:center;position:fixed;width:100%; height:100%;z-index:1000; display:none;" >
+                <img style="text-align:center" src="img/ok.png" width="300px" height="300px" height="auto" class="grow">
+                </div>
+				<div class="row">
+                    <a href="#menu" class="push_button" style="margin-left:5px;"></a>
+                    <div style="display:inline-block; width:250px;" id="custom-search-input">
+                         <div class="input-group col-xs-12 col-sm-12 col-md-12">
+                         		<!--class="search-query form-control"-->
+                               <div style="width: 200px; text-align:center;">
+                               <input id="search-text" placeholder="Search" type="text"></div>
+                               <!--<span class="input-group-btn">
+                               <button class="btn btn-danger" type="button" style="width: 35px;height: 30px;">
+                               <!--<span class=" glyphicon glyphicon-search img-search"></span>
+                               </button>
+                               </span>-->
+                        </div>
+                    </div> 
+                    <a id="search-text-link" href="#search_results" class="push_button2" style="left:-20px;"></a>
+                </div>
+        <div id="contentlist" class="content-list"></div>
+                <div align="center" style="margin-left:-20px;margin-top:-85px;" class="cesta">
+                    <a href="#ver_carrito" onclick="ver_carrito_update();"><img style="z-index:1000;" width="350px" src="img/cesta.png" id="droppable"/></a>
+                </div>
+                
+                
+            
+     </div>
+  </div>
+  <!-- Pagina 1-->
+  <div data-role="page" id="search_results" data-theme="b">
+  <p>
+            <div data-role="header" data-position="fixed" data-add-back-btn="true">
+                	<h1 id="d">Busqueda</h1>
+            </div>
+            <div data-role="content" data-theme="a" style="border:none;">
+            <div style="width:70%; display:inline-table;"><input id="search-result-text"value="TEXTO BUSCADO" style="width:70%;" type="text"></div>
+            <div style="width:20%; display:inline-table; top:-20px;">
+            <a role="button" class="ui-link ui-btn ui-btn-a ui-icon-search ui-btn-icon-notext ui-btn-inline ui-shadow ui-corner-all ui-last-child" href="#" data-role="button" data-icon="search" data-iconpos="notext" data-theme="a" data-inline="true">My button</a>
+            </div>
+			<div id="contain_busq">
+            <!--hr/>
+					<img id="ok2" src="img/ok.png" width="100%" height="auto" style="position:absolute;top:20%; left:0;z-index:1000; display:none;" class="grow">
+						<div align="center" ><img class="wow" id="wow" width="150px" height="auto" src="" /></div>
+                        <div style="width:100%;padding-top:20px;">
+                        <div style="display:inline-block; width:45%; font-weight:bold; color:#F90;" align="left">Descripción:</div>
+                        <div style="display:inline-block; width:45%;" align="right">$0.00</div>
+                        </div>
+                        <textarea id="desc_ver_detalle" cols="" rows="" style="height:100px;"></textarea>
+                        <input name="agregar" id="agregar" type="button" value="Agregar al carrito">
+                        <hr/>
+                        <div align="center" ><img class="wow" id="wow" width="150px" height="auto" src="" /></div>
+                        <div style="width:100%;padding-top:20px;">
+                        <div style="display:inline-block; width:45%; font-weight:bold; color:#F90;" align="left">Descripción:</div>
+                        <div style="display:inline-block; width:45%;" align="right">$0.00</div>
+                        </div>
+                        <textarea id="desc_ver_detalle" cols="" rows="" style="height:100px;"></textarea>
+                        <input name="agregar" id="agregar" type="button" value="Agregar al carrito">
+                        <hr/-->
+            </div>
+			</div>
+		</div>
+  <!-- Pagina 2-->
+  <div data-role="page" style="min-height: 100%;background: #fff;" id="searchlist" data-theme="b">
+  <p>
+            <div data-role="header" data-position="fixed" data-add-back-btn="true">
+                	<h1 id="d"></h1>
+            </div>
+            <div data-role="content" data-theme="a" style="border:none;">
+            <img id="ok2" src="img/ok.png" width="100%" height="auto" style="position:absolute;top:20%; left:0;z-index:1000; display:none;" class="grow">
+						<div align="center" ><img class="wow" id="wow" width="150px" height="auto" src="" /></div>
+                        <div style="width:100%;padding-top:20px;">
+                        <div style="display:inline-block; width:45%; font-weight:bold; color:#F90;" align="left">Descripción:</div>
+                        <div id="precio-tab" style="display:inline-block; width:45%;" align="right">$0.00</div>
+                        </div>
+                        <textarea id="desc_ver_detalle2" cols="" rows="" style="height:100px;"></textarea>
+                        <input name="agregar" id="clickagregar" class="clickagregar" type="button" onclick="agregar_carrito()" value="Agregar al carrito">
+            </div>
+		</div>   
+  <!-- Pagina 3-->
+  <div data-role="page" id="ver_carrito" data-theme="b">
+  <div id="loading_image" style="z-index: 100;display:none;background:#fff;position:fixed;width:100%;height:100%;text-align:center;"><img src="img/loading_animation.gif"></div>
+  <p>
+            <div data-role="header" data-position="fixed" data-add-back-btn="true">
+                	<h1>VER MI CARRITO</h1>
+            </div>
+            <div data-role="content" data-theme="a" style="border:none;">
+						<div align="center" style="font-size:16px;"><span style=" font-style:oblique; text-transform:capitalize;">Total: </span><span id="precio_total" style=" font-weight:bold; color:#F93;">$0.00</span></div>
+                        <div align="center" style="font-size:16px;"><span style=" font-style:oblique; text-transform:capitalize;">Costo de delivery: </span><span style=" font-weight:bold; color:#F93;">$0.00</span></div>
+                        <hr/>
+                        <textarea id="comentario_opcional" cols="" rows="" style="height:100px;" placeholder="Agregar comentario (opcional)"></textarea>
+                <div class="productos-list">
+						<!--hr/>
+                        <div style="display:inline-table; width:20%;"><img class="wow" id="wow" width="150px" height="auto" src="img/_pelota_a.png" class="hvr-grow" /></div>
+                        <div style="display:inline-table; padding-left:20px;">
+                        Producto
+                        </div>
+                        <div style="display:inline-table; padding-left:40px;">
+                        $0.00
+                        </div>
+                        <div data-role="rangeslider">
+                            <input name="range-1a" id="range-1a" min="0" max="100" value="1" type="range"/>
+                        </div>
+                        <hr/-->
+				</div>
+                        <input data-icon="bars" id="save_list" value="Guardar como lista" type="button">
+                        <div data-role="navbar">
+                        <ul>
+                            <li><a href="#hacer_pedido" data-icon="check">Hacer Pedido</a>
+                            </li>
+                            <li><a href="#vaciar" onclick="vaciar_lista()" data-icon="delete">Vaciar</a>
+                            </li>
+                    	</ul>
+                        </div>
+                        
+            </div>
+		</div>
+ <!-- Pagina 4-->
+  <div data-role="page" id="hacer_pedido" data-theme="b">
+  <p>
+            <div data-role="header" data-position="fixed" data-add-back-btn="true">
+                	
+            </div>
+            <div data-role="content" data-theme="a" style="border:none;">
+						<div align="center" style="font-size:16px; padding-bottom:20px; padding-top:30px;"><span style=" font-style:oblique; text-transform:capitalize; color:#36C;">¿Incluir Propina?</div>
+                        <div data-role="navbar">
+                        <ul>
+                            <li><a href="#">No</a>
+                            </li>
+                            <li><a href="propina(100)">$100</a>
+                            </li>
+                            <li><a href="propina(200)">$200</a>
+                            </li>
+                            <li><a href="" onclick="javascript:document.getElementById('prop').style.display = 'block';">Otro</a>
+                            </li>
+                    	</ul>
+                        </div>
+                        <input type="text" name="" id="prop" style="display:none;" placeholder="$ 1.00" />
+                        
+                        <div align="center" style="font-size:16px;">
+                        <span style=" font-style:oblique; text-transform:capitalize; color:#36C;">¿Desea Algo Más?</div>
+                        <div style=" font-style:oblique; text-transform:capitalize; color:#F93;" align="center">Si no esta en la tienda anotalo aquí y te lo traemos...</div>
+                        <textarea id="comentario_opcional" cols="" rows="" style="height:100px;" placeholder="Agregar pedido"></textarea>
+                        
+                        <div class="ui-field-contain">
+                            <select name="select-custom-1" id="select-custom-1" data-native-menu="false">
+                                <option value="1">Tarjeta de Credito</option>
+                                <option value="2">Efectivo</option>
+                            </select>
+                        </div>
+                   
+                        <div data-role="navbar">
+                        <ul>
+                            <li><a href="#confirmar_pedido" data-icon="check">Hacer Pedido</a>
+                            </li>
+                    	</ul>
+                        </div>
+                        
+            </div>
+		</div>
+ <!-- Pagina 5-->
+  <div data-role="page" id="hacer_pedido" data-theme="b">
+  <p>
+            <div data-role="header" data-position="fixed" data-add-back-btn="true">
+                	<h1>Confirmar</h1>
+            </div>
+            <div data-role="content" data-theme="a" style="border:none;">
+						<div align="center" style="font-size:16px; padding-bottom:20px; padding-top:50px;"><span style=" font-style:oblique; text-transform:capitalize; color:#36C;">¿Desea Confirmar el Pedido?</div>
+                        <div data-role="navbar">
+                        <ul>
+                            <li><a data-icon="delete" href="#ver_carrito">No</a>
+                            </li>
+                            <li><a data-icon="check" href="#confirmado">Si</a>
+                            </li>
+                    	</ul>
+                        </div>
+                        
+            </div>
+		</div>
+<!-- Pagina 6-->
+  <div data-role="page" id="confirmado" data-theme="b">
+  <p>
+            <div data-role="header" data-position="fixed" data-add-back-btn="true">
+                	<h1>Confirmado!</h1>
+            </div>
+            <div data-role="content" data-theme="a" style="border:none;">
+            			<div align="center"><img src="img/loading_animation.gif"></div>
+						<div align="center" style="font-size:16px; padding-bottom:20px; top:-50px;"><span style=" font-style:oblique; color:#36C;">En unos minutos estaremos haciendo llegar tu pedido!</div>
+                       <input name="agregar" id="agregar" type="button" value="Llamanos!">
+                       <input name="agregar" id="agregar" type="button" value="Mandanos un SMS!">
+                        
+            </div>
+		</div>  
+        <div id="deviceready" class="blink">
+            <p class="event listening"></p>
+            <p class="event received"></p>
+        </div>
+        <!--script type="text/javascript" src="cordova.js"></script-->
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript">
+            app.initialize();
+        </script>
+    </body>
+</html>
